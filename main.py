@@ -26,7 +26,8 @@ class Main:
         pyxel.run(self.update, self.draw)
 
     def update(self) -> None:
-        pass
+        if pyxel.btn(pyxel.KEY_SPACE):
+            self.answer = ""
 
     def draw(self) -> None:
         pyxel.cls(3)
@@ -46,7 +47,7 @@ class Main:
         # 操作入力ボタン
         pyxel.rect(8, 112, 32, 16, 15)
         pyxel.text(14, 114, "CLEAR", 0)
-        pyxel.text(14, 121, "[ESC]", 0)
+        pyxel.text(14, 121, "[SPC]", 0)
         pyxel.rect(48, 112, 32, 16, 15)
         pyxel.text(52, 114, "BckSpc", 0)
         pyxel.text(56, 121, "[BS]", 0)
