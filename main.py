@@ -7,6 +7,20 @@ class Main:
         self.question: int = 2 * 3 * 5 * 7
         self.answer: str = "2*3*5*7"
 
+        self.num_x_offsets = {
+            "0": common.NUM_X_0,
+            "1": common.NUM_X_1,
+            "2": common.NUM_X_2,
+            "3": common.NUM_X_3,
+            "4": common.NUM_X_4,
+            "5": common.NUM_X_5,
+            "6": common.NUM_X_6,
+            "7": common.NUM_X_7,
+            "8": common.NUM_X_8,
+            "9": common.NUM_X_9,
+            "*": common.OPE_X_MUL,
+        }
+
         pyxel.init(common.WINDOW_WIDTH, common.WINDOW_HEIGHT, caption="PyxPrime")
         pyxel.load("assets/pyxprime.pyxres")
         pyxel.run(self.update, self.draw)
@@ -17,10 +31,9 @@ class Main:
     def draw(self) -> None:
         pyxel.cls(3)
         # 問題領域
-        pyxel.rect(8, 8, 112, 32, 11)
-        pyxel.text(10, 16, str(self.question), 0)  # TODO 数値を正しい位置に描画する
+        self.draw_num_area(str(self.question), 8, 8, 112, 32, 11, 7)
         # 回答領域
-        self.draw_answer()
+        self.draw_num_area(self.answer, 8, 48, 112, 32, 6, 7)
         # 数字入力ボタン
         pyxel.rect(8, 88, 16, 16, 14)
         pyxel.blt(8, 88, 0, common.NUM_X_2, common.NUM_Y, 16, 16, 7)
@@ -41,28 +54,18 @@ class Main:
         pyxel.text(95, 114, "ENTER", 0)
         pyxel.text(95, 121, "[ENT]", 0)
 
-    def draw_answer(self) -> None:
-        pyxel.rect(8, 48, 112, 32, 6)
-        answer_len: int = len(self.answer)
-        answer_draw_len: int = answer_len * 16
-        ans_x: int = common.WINDOW_WIDTH // 2 - answer_draw_len // 2
-        for i, s in enumerate(self.answer):
-            num_x = -1
+    def draw_num_area(self, s: str, x, y, w, h, area_col, ch_bg_col) -> None:
+        pyxel.rect(x, y, w, h, area_col)
+        draw_len: int = len(s) * 16
+        str_x: int = common.WINDOW_WIDTH // 2 - draw_len // 2
+        for i, v in enumerate(s):
+            num_x = self.num_x_offsets[v]
             num_y = common.NUM_Y
-            if s == "2":
-                num_x = common.NUM_X_2
-            elif s == "3":
-                num_x = common.NUM_X_3
-            elif s == "5":
-                num_x = common.NUM_X_5
-            elif s == "7":
-                num_x = common.NUM_X_7
-            elif s == "*":
-                num_x = 0
-                num_y = 32
+            if v == "*":
+                num_y = common.OPE_Y
 
             if num_x != -1:
-                pyxel.blt(ans_x + (i * 16), 56, 0, num_x, num_y, 16, 16, 7)
+                pyxel.blt(str_x + (i * 16), (y + 8), 0, num_x, num_y, 16, 16, ch_bg_col)
 
 
 Main()

@@ -12,3 +12,6 @@ NUM_X_6: int = 96
 NUM_X_7: int = 112
 NUM_X_8: int = 128
 NUM_X_9: int = 144
+
+OPE_Y: int = 32
+OPE_X_MUL: int = 0
