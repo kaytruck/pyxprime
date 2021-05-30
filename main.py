@@ -28,8 +28,10 @@ class Main:
 
     def update(self) -> None:
         if pyxel.btn(pyxel.KEY_SPACE):
+            # スペースキーで回答を全消去
             self.answer_list = []
         if len(self.answer_list) < 4:
+            # 数字キー入力
             if pyxel.btnp(pyxel.KEY_2):
                 self.answer_list.append(2)
             if pyxel.btnp(pyxel.KEY_3):
@@ -39,11 +41,16 @@ class Main:
             if pyxel.btnp(pyxel.KEY_7):
                 self.answer_list.append(7)
         if len(self.answer_list) > 0 and pyxel.btnp(pyxel.KEY_BACKSPACE):
+            # BSキーで直前に入力した数字を消去
             self.answer_list = self.answer_list[0:-1]
 
         self.update_answer_str()
 
     def update_answer_str(self):
+        """回答文字列生成
+
+        回答が入力された配列から、回答文字列を生成する。
+        """
         self.answer_str = ""
         for a in self.answer_list:
             self.answer_str += str(a)
@@ -52,6 +59,7 @@ class Main:
             self.answer_str = self.answer_str[0:-1]
 
     def draw(self) -> None:
+        """画面描画"""
         pyxel.cls(3)
         # 問題領域
         self.draw_num_area(str(self.question), 8, 8, 112, 32, 11, 7)
@@ -78,6 +86,10 @@ class Main:
         pyxel.text(95, 121, "[ENT]", 0)
 
     def draw_num_area(self, s: str, x, y, w, h, area_col, ch_bg_col) -> None:
+        """問題および回答領域描画
+
+        問題領域、または回答領域の数式を描画する。
+        """
         pyxel.rect(x, y, w, h, area_col)
         draw_len: int = len(s) * 16
         str_x: int = common.WINDOW_WIDTH // 2 - draw_len // 2
