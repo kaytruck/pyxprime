@@ -5,7 +5,8 @@ import common
 class Main:
     def __init__(self) -> None:
         self.question: int = 2 * 3 * 5 * 7
-        self.answer: str = "2*3*5*7"
+        self.answer_str: str = ""
+        self.answer_list = [2, 3, 5, 7]
 
         self.num_x_offsets = {
             "0": common.NUM_X_0,
@@ -27,14 +28,35 @@ class Main:
 
     def update(self) -> None:
         if pyxel.btn(pyxel.KEY_SPACE):
-            self.answer = ""
+            self.answer_list = []
+        if len(self.answer_list) < 4:
+            if pyxel.btnp(pyxel.KEY_2):
+                self.answer_list.append(2)
+            if pyxel.btnp(pyxel.KEY_3):
+                self.answer_list.append(3)
+            if pyxel.btnp(pyxel.KEY_5):
+                self.answer_list.append(5)
+            if pyxel.btnp(pyxel.KEY_7):
+                self.answer_list.append(7)
+        if len(self.answer_list) > 0 and pyxel.btnp(pyxel.KEY_BACKSPACE):
+            self.answer_list = self.answer_list[0:-1]
+
+        self.update_answer_str()
+
+    def update_answer_str(self):
+        self.answer_str = ""
+        for a in self.answer_list:
+            self.answer_str += str(a)
+            self.answer_str += "*"
+        if len(self.answer_str) > 1 and self.answer_str[-1] == "*":
+            self.answer_str = self.answer_str[0:-1]
 
     def draw(self) -> None:
         pyxel.cls(3)
         # 問題領域
         self.draw_num_area(str(self.question), 8, 8, 112, 32, 11, 7)
         # 回答領域
-        self.draw_num_area(self.answer, 8, 48, 112, 32, 6, 7)
+        self.draw_num_area(self.answer_str, 8, 48, 112, 32, 6, 7)
         # 数字入力ボタン
         pyxel.rect(8, 88, 16, 16, 14)
         pyxel.blt(8, 88, 0, common.NUM_X_2, common.NUM_Y, 16, 16, 7)
