@@ -1,12 +1,13 @@
 import pyxel
+import random
 import common
 
 
 class Main:
     def __init__(self) -> None:
-        self.question: int = 2 * 3 * 5 * 7
+        self.question: int = self.create_question()
         self.answer_str: str = ""
-        self.answer_list = [2, 3, 5, 7]
+        self.answer_list = []
 
         self.num_x_offsets = {
             "0": common.NUM_X_0,
@@ -40,11 +41,44 @@ class Main:
                 self.answer_list.append(5)
             if pyxel.btnp(pyxel.KEY_7):
                 self.answer_list.append(7)
-        if len(self.answer_list) > 0 and pyxel.btnp(pyxel.KEY_BACKSPACE):
-            # BSキーで直前に入力した数字を消去
-            self.answer_list = self.answer_list[0:-1]
+        if len(self.answer_list) > 0:
+            if pyxel.btnp(pyxel.KEY_BACKSPACE):
+                # BSキーで直前に入力した数字を消去
+                self.answer_list = self.answer_list[0:-1]
+            if pyxel.btnp(pyxel.KEY_ENTER):
+                # 割り算の実行
+                if self.calc():
+                    # 次の問題の生成
+                    self.question = self.create_question()
+                self.answer_list = []
 
         self.update_answer_str()
+
+    def calc(self):
+        """計算実行
+
+        問題の数値を回答の数値で割る。
+
+        Returns:
+            True:計算結果が1になった, False:それ以外
+        """
+        answer: int = 1
+        for a in self.answer_list:
+            answer *= a
+        if self.question % answer == 0:
+            self.question //= answer
+        return True if self.question == 1 else False
+
+    def create_question(self):
+        """問題生成
+
+        Returns:
+            問題数値
+        """
+        question: int = 1
+        for _ in range(random.randint(1, 4)):
+            question *= random.choice([2, 3, 5, 7])
+        return question
 
     def update_answer_str(self):
         """回答文字列生成
