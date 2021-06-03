@@ -8,6 +8,7 @@ class Main:
         self.question: int = self.create_question()
         self.answer_str: str = ""
         self.answer_list = []
+        self.score: int = 0
 
         self.num_x_offsets = {
             "0": common.NUM_X_0,
@@ -48,6 +49,7 @@ class Main:
             if pyxel.btnp(pyxel.KEY_ENTER):
                 # 割り算の実行
                 if self.calc():
+                    self.score += 1
                     # 次の問題の生成
                     self.question = self.create_question()
                 self.answer_list = []
@@ -95,29 +97,33 @@ class Main:
     def draw(self) -> None:
         """画面描画"""
         pyxel.cls(3)
+        # スコア
+        pyxel.text(8, 8, "SCORE: " + str(self.score), 0)
         # 問題領域
-        self.draw_num_area(str(self.question), 8, 8, 112, 32, 11, 7)
+        self.draw_num_area(
+            str(self.question), 8, common.QUESTION_AREA_Y, 112, 32, 11, 7
+        )
         # 回答領域
-        self.draw_num_area(self.answer_str, 8, 48, 112, 32, 6, 7)
+        self.draw_num_area(self.answer_str, 8, common.ANSWER_AREA_Y, 112, 32, 6, 7)
         # 数字入力ボタン
-        pyxel.rect(8, 88, 16, 16, 14)
-        pyxel.blt(8, 88, 0, common.NUM_X_2, common.NUM_Y, 16, 16, 7)
-        pyxel.rect(40, 88, 16, 16, 14)
-        pyxel.blt(40, 88, 0, common.NUM_X_3, common.NUM_Y, 16, 16, 7)
-        pyxel.rect(72, 88, 16, 16, 14)
-        pyxel.blt(72, 88, 0, common.NUM_X_5, common.NUM_Y, 16, 16, 7)
-        pyxel.rect(104, 88, 16, 16, 14)
-        pyxel.blt(104, 88, 0, common.NUM_X_7, common.NUM_Y, 16, 16, 7)
+        pyxel.rect(8, common.NUMKEY_AREA_Y, 16, 16, 14)
+        pyxel.blt(8, common.NUMKEY_AREA_Y, 0, common.NUM_X_2, common.NUM_Y, 16, 16, 7)
+        pyxel.rect(40, common.NUMKEY_AREA_Y, 16, 16, 14)
+        pyxel.blt(40, common.NUMKEY_AREA_Y, 0, common.NUM_X_3, common.NUM_Y, 16, 16, 7)
+        pyxel.rect(72, common.NUMKEY_AREA_Y, 16, 16, 14)
+        pyxel.blt(72, common.NUMKEY_AREA_Y, 0, common.NUM_X_5, common.NUM_Y, 16, 16, 7)
+        pyxel.rect(104, common.NUMKEY_AREA_Y, 16, 16, 14)
+        pyxel.blt(104, common.NUMKEY_AREA_Y, 0, common.NUM_X_7, common.NUM_Y, 16, 16, 7)
         # 操作入力ボタン
-        pyxel.rect(8, 112, 32, 16, 15)
-        pyxel.text(14, 114, "CLEAR", 0)
-        pyxel.text(14, 121, "[SPC]", 0)
-        pyxel.rect(48, 112, 32, 16, 15)
-        pyxel.text(52, 114, "BckSpc", 0)
-        pyxel.text(56, 121, "[BS]", 0)
-        pyxel.rect(88, 112, 32, 16, 15)
-        pyxel.text(95, 114, "ENTER", 0)
-        pyxel.text(95, 121, "[ENT]", 0)
+        pyxel.rect(8, common.BTN_AREA_Y, 32, 16, 15)
+        pyxel.text(14, common.BTN_NAME_Y, "CLEAR", 0)
+        pyxel.text(14, common.BTN_KEY_Y, "[SPC]", 0)
+        pyxel.rect(48, common.BTN_AREA_Y, 32, 16, 15)
+        pyxel.text(52, common.BTN_NAME_Y, "BckSpc", 0)
+        pyxel.text(56, common.BTN_KEY_Y, "[BS]", 0)
+        pyxel.rect(88, common.BTN_AREA_Y, 32, 16, 15)
+        pyxel.text(95, common.BTN_NAME_Y, "ENTER", 0)
+        pyxel.text(95, common.BTN_KEY_Y, "[ENT]", 0)
 
     def draw_num_area(self, s: str, x, y, w, h, area_col, ch_bg_col) -> None:
         """問題および回答領域描画

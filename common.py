@@ -1,5 +1,11 @@
 WINDOW_WIDTH: int = 128
-WINDOW_HEIGHT: int = 136
+WINDOW_HEIGHT: int = 152
+QUESTION_AREA_Y: int = 24
+ANSWER_AREA_Y: int = 64
+NUMKEY_AREA_Y: int = 104
+BTN_AREA_Y: int = 128
+BTN_NAME_Y: int = BTN_AREA_Y + 2
+BTN_KEY_Y: int = BTN_AREA_Y + 9
 
 NUM_Y: int = 16
 NUM_X_0: int = 0
