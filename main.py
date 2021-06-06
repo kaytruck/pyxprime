@@ -1,14 +1,18 @@
 import pyxel
 import random
 import common
+from status import Status
 
 
 class Main:
     def __init__(self) -> None:
-        self.question: int = self.create_question()
+        self.question: int = 0
         self.answer_str: str = ""
         self.answer_list = []
+        self.timer: int = 0
         self.score: int = 0
+        self.status = Status.TITLE
+        self.msgcolor: int = 8
 
         self.num_x_offsets = {
             "0": common.NUM_X_0,
@@ -24,11 +28,39 @@ class Main:
             "*": common.OPE_X_MUL,
         }
 
-        pyxel.init(common.WINDOW_WIDTH, common.WINDOW_HEIGHT, caption="PyxPrime")
+        pyxel.init(
+            common.WINDOW_WIDTH,
+            common.WINDOW_HEIGHT,
+            caption="PyxPrime",
+            fps=common.FPS,
+        )
         pyxel.load("assets/pyxprime.pyxres")
         pyxel.run(self.update, self.draw)
 
     def update(self) -> None:
+        self.msgcolor = 10 if pyxel.frame_count % 20 == 1 else 8
+        if self.status == Status.TITLE:
+            self.update_title()
+        elif self.status == Status.GAMING:
+            self.update_gaming()
+        elif self.status == Status.TIMEUP:
+            self.update_timeup()
+
+    def update_title(self):
+        """update(タイトル画面)"""
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            self.status = Status.GAMING
+            self.timer = 0
+            self.question: int = self.create_question()
+
+    def update_gaming(self):
+        """update(ゲーム中)"""
+        # タイマー更新
+        if pyxel.frame_count % common.FPS == 1:
+            self.timer += 1
+        if self.timer >= common.TIMELIMIT:
+            self.status = Status.TIMEUP
+            return
         if pyxel.btn(pyxel.KEY_SPACE):
             # スペースキーで回答を全消去
             self.answer_list = []
@@ -55,6 +87,9 @@ class Main:
                 self.answer_list = []
 
         self.update_answer_str()
+
+    def update_timeup(self):
+        self.update_title()
 
     def calc(self):
         """計算実行
@@ -97,8 +132,10 @@ class Main:
     def draw(self) -> None:
         """画面描画"""
         pyxel.cls(3)
+        # タイマー
+        pyxel.text(8, 8, "TIME: " + str(self.timer), 0)
         # スコア
-        pyxel.text(8, 8, "SCORE: " + str(self.score), 0)
+        pyxel.text(50, 8, "SCORE: " + str(self.score), 0)
         # 問題領域
         self.draw_num_area(
             str(self.question), 8, common.QUESTION_AREA_Y, 112, 32, 11, 7
@@ -124,6 +161,14 @@ class Main:
         pyxel.rect(88, common.BTN_AREA_Y, 32, 16, 15)
         pyxel.text(95, common.BTN_NAME_Y, "ENTER", 0)
         pyxel.text(95, common.BTN_KEY_Y, "[ENT]", 0)
+
+        if self.status == Status.TITLE:
+            # タイトル画面の表示
+            pyxel.text(20, 70, "Press [Space] To Start.", self.msgcolor)
+        elif self.status == Status.TIMEUP:
+            # クリア画面の表示
+            pyxel.text(50, 60, "TIME UP!!", self.msgcolor)
+            pyxel.text(16, 70, "Press [Space] To Restart.", self.msgcolor)
 
     def draw_num_area(self, s: str, x, y, w, h, area_col, ch_bg_col) -> None:
         """問題および回答領域描画

@@ -21,3 +21,6 @@ NUM_X_9: int = 144
 
 OPE_Y: int = 32
 OPE_X_MUL: int = 0
+
+FPS: int = 30
+TIMELIMIT: int = 30
