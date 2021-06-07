@@ -14,6 +14,7 @@ class Main:
         self.status = Status.TITLE
         self.msgcolor: int = 8
         self.fail_cnt: int = 0
+        self.answer_area_col = 6
 
         self.num_x_offsets = {
             "0": common.NUM_X_0,
@@ -88,6 +89,13 @@ class Main:
                 self.answer_list = []
 
         self.update_answer_str()
+        # 回答領域の色を設定
+        if self.fail_cnt > 0:
+            # 誤答時の色
+            self.fail_cnt -= 1
+            self.answer_area_col = 8
+        else:
+            self.answer_area_col = 6
 
     def update_timeup(self):
         self.update_title()
@@ -145,13 +153,8 @@ class Main:
             str(self.question), 8, common.QUESTION_AREA_Y, 112, 32, 11, 7
         )
         # 回答領域
-        if self.fail_cnt > 0:
-            self.fail_cnt -= 1
-            area_col = 8
-        else:
-            area_col = 6
         self.draw_num_area(
-            self.answer_str, 8, common.ANSWER_AREA_Y, 112, 32, area_col, 7
+            self.answer_str, 8, common.ANSWER_AREA_Y, 112, 32, self.answer_area_col, 7
         )
         # 数字入力ボタン
         pyxel.rect(8, common.NUMKEY_AREA_Y, 16, 16, 14)
