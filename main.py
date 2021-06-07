@@ -14,6 +14,8 @@ class Main:
         self.status = Status.TITLE
         self.msgcolor: int = 8
         self.fail_cnt: int = 0
+        self.renew_cnt: int = 0
+        self.question_area_col = 11
         self.answer_area_col = 6
 
         self.num_x_offsets = {
@@ -89,13 +91,22 @@ class Main:
                 self.answer_list = []
 
         self.update_answer_str()
-        # 回答領域の色を設定
+
+        # 問題領域の背景色を設定
+        if self.renew_cnt > 0:
+            # 問題更新時の色
+            self.renew_cnt -= 1
+            self.question_area_col = common.QUESTION_AREA_BLINK_COL
+        else:
+            self.question_area_col = common.QUESTION_AREA_COL
+
+        # 回答領域の背景色を設定
         if self.fail_cnt > 0:
             # 誤答時の色
             self.fail_cnt -= 1
-            self.answer_area_col = 8
+            self.answer_area_col = common.ANSWER_AREA_BLINK_COL
         else:
-            self.answer_area_col = 6
+            self.answer_area_col = common.ANSWER_AREA_COL
 
     def update_timeup(self):
         self.update_title()
@@ -115,7 +126,7 @@ class Main:
             self.question //= answer
         else:
             # 誤答
-            self.fail_cnt = common.FAIL_CNT_LIMIT
+            self.fail_cnt = common.BLINK_CNT_LIMIT
         return True if self.question == 1 else False
 
     def create_question(self):
@@ -124,6 +135,7 @@ class Main:
         Returns:
             問題数値
         """
+        self.renew_cnt = common.BLINK_CNT_LIMIT
         question: int = 1
         for _ in range(random.randint(1, 4)):
             question *= random.choice([2, 3, 5, 7])
@@ -150,7 +162,13 @@ class Main:
         pyxel.text(50, 8, "SCORE: " + str(self.score), 0)
         # 問題領域
         self.draw_num_area(
-            str(self.question), 8, common.QUESTION_AREA_Y, 112, 32, 11, 7
+            str(self.question),
+            8,
+            common.QUESTION_AREA_Y,
+            112,
+            32,
+            self.question_area_col,
+            7,
         )
         # 回答領域
         self.draw_num_area(
