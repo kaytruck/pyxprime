@@ -24,3 +24,4 @@ OPE_X_MUL: int = 0
 
 FPS: int = 30
 TIMELIMIT: int = 30
+FAIL_CNT_LIMIT: int = 3

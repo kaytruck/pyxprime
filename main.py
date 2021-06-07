@@ -13,6 +13,7 @@ class Main:
         self.score: int = 0
         self.status = Status.TITLE
         self.msgcolor: int = 8
+        self.fail_cnt: int = 0
 
         self.num_x_offsets = {
             "0": common.NUM_X_0,
@@ -104,6 +105,9 @@ class Main:
             answer *= a
         if self.question % answer == 0:
             self.question //= answer
+        else:
+            # 誤答
+            self.fail_cnt = common.FAIL_CNT_LIMIT
         return True if self.question == 1 else False
 
     def create_question(self):
@@ -141,7 +145,14 @@ class Main:
             str(self.question), 8, common.QUESTION_AREA_Y, 112, 32, 11, 7
         )
         # 回答領域
-        self.draw_num_area(self.answer_str, 8, common.ANSWER_AREA_Y, 112, 32, 6, 7)
+        if self.fail_cnt > 0:
+            self.fail_cnt -= 1
+            area_col = 8
+        else:
+            area_col = 6
+        self.draw_num_area(
+            self.answer_str, 8, common.ANSWER_AREA_Y, 112, 32, area_col, 7
+        )
         # 数字入力ボタン
         pyxel.rect(8, common.NUMKEY_AREA_Y, 16, 16, 14)
         pyxel.blt(8, common.NUMKEY_AREA_Y, 0, common.NUM_X_2, common.NUM_Y, 16, 16, 7)
@@ -174,6 +185,15 @@ class Main:
         """問題および回答領域描画
 
         問題領域、または回答領域の数式を描画する。
+
+        Args:
+            s: 出力する文字列
+            x:
+            y:
+            w:
+            h:
+            area_col: 表示領域の背景色
+            ch_bg_col: イメージバンクの文字の背景色(透過色)
         """
         pyxel.rect(x, y, w, h, area_col)
         draw_len: int = len(s) * 16
