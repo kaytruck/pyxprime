@@ -13,8 +13,8 @@ class Main:
         self.score: int = 0
         self.status = Status.TITLE
         self.msgcolor: int = 8
-        self.fail_cnt: int = 0
-        self.renew_cnt: int = 0
+        self.fail_blink_cnt: int = 0
+        self.renew_blink_cnt: int = 0
         self.question_area_col = 11
         self.answer_area_col = 6
 
@@ -93,17 +93,17 @@ class Main:
         self.update_answer_str()
 
         # 問題領域の背景色を設定
-        if self.renew_cnt > 0:
+        if self.renew_blink_cnt > 0:
             # 問題更新時の色
-            self.renew_cnt -= 1
+            self.renew_blink_cnt -= 1
             self.question_area_col = common.QUESTION_AREA_BLINK_COL
         else:
             self.question_area_col = common.QUESTION_AREA_COL
 
         # 回答領域の背景色を設定
-        if self.fail_cnt > 0:
+        if self.fail_blink_cnt > 0:
             # 誤答時の色
-            self.fail_cnt -= 1
+            self.fail_blink_cnt -= 1
             self.answer_area_col = common.ANSWER_AREA_BLINK_COL
         else:
             self.answer_area_col = common.ANSWER_AREA_COL
@@ -126,7 +126,7 @@ class Main:
             self.question //= answer
         else:
             # 誤答
-            self.fail_cnt = common.BLINK_CNT_LIMIT
+            self.fail_blink_cnt = common.BLINK_CNT_LIMIT
         return True if self.question == 1 else False
 
     def create_question(self):
@@ -135,7 +135,7 @@ class Main:
         Returns:
             問題数値
         """
-        self.renew_cnt = common.BLINK_CNT_LIMIT
+        self.renew_blink_cnt = common.BLINK_CNT_LIMIT
         question: int = 1
         for _ in range(random.randint(1, 4)):
             question *= random.choice([2, 3, 5, 7])
