@@ -1,3 +1,4 @@
+import os.path
 import pyxel
 import random
 import common
@@ -11,6 +12,7 @@ class Main:
         self.answer_list = []
         self.timer: int = 0
         self.score: int = 0
+        self.hi_score: int = 0
         self.status = Status.TITLE
         self.msgcolor: int = 8
         self.fail_blink_cnt: int = 0
@@ -31,6 +33,7 @@ class Main:
             "9": common.NUM_X_9,
             "*": common.OPE_X_MUL,
         }
+        self.load_hiscore()
 
         pyxel.init(
             common.WINDOW_WIDTH,
@@ -55,6 +58,7 @@ class Main:
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.status = Status.GAMING
             self.timer = 0
+            self.score = 0
             self.question: int = self.create_question()
 
     def update_gaming(self):
@@ -109,6 +113,9 @@ class Main:
             self.answer_area_col = common.ANSWER_AREA_COL
 
     def update_timeup(self):
+        if self.score > self.hi_score:
+            self.hi_score = self.score
+            self.save_hiscore()
         self.update_title()
 
     def calc(self):
@@ -153,13 +160,27 @@ class Main:
         if len(self.answer_str) > 1 and self.answer_str[-1] == "*":
             self.answer_str = self.answer_str[0:-1]
 
+    def load_hiscore(self) -> None:
+        if os.path.exists(common.DAT_FILE_NAME):
+            with open(common.DAT_FILE_NAME) as f:
+                for line in f:
+                    if line.startswith("hiscore="):
+                        self.hi_score = int(line[line.find("=") + 1 :])
+                        break
+
+    def save_hiscore(self) -> None:
+        with open(common.DAT_FILE_NAME, "w") as f:
+            f.write(f"hiscore={self.hi_score}")
+
     def draw(self) -> None:
         """画面描画"""
         pyxel.cls(3)
         # タイマー
-        pyxel.text(8, 8, "TIME: " + str(self.timer), 0)
+        pyxel.text(4, 8, "TIME:" + str(self.timer), 0)
         # スコア
-        pyxel.text(50, 8, "SCORE: " + str(self.score), 0)
+        pyxel.text(38, 8, "SCORE:" + str(self.score), 0)
+        # ハイスコア
+        pyxel.text(80, 8, "HISCORE:" + str(self.hi_score), 0)
         # 問題領域
         self.draw_num_area(
             str(self.question),
